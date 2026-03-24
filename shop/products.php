@@ -79,3 +79,48 @@ require_once __DIR__ . '/../includes/header.php';
 </div>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<?php include '../includes/header.php'; ?>
+
+<link rel="stylesheet" href="../assets/css/style.css">
+
+<div class="container">
+    <h2 class="title">Shop Now</h2>
+
+    <div class="products">
+
+        <!-- Product 1 -->
+        <div class="product">
+            <img src="../assets/images/bag1.jpg" alt="Bag 1">
+            <h3>Luxury Handbag 1</h3>
+            <p class="price">$120</p>
+            <button>Add to Cart</button>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="product">
+            <img src="../assets/images/bag2.jpg" alt="Bag 2">
+            <h3>Luxury Handbag 2</h3>
+            <p class="price">$150</p>
+            <button>Add to Cart</button>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="product">
+            <img src="../assets/images/bag3.jpg" alt="Bag 3">
+            <h3>Luxury Handbag 3</h3>
+            <p class="price">$180</p>
+            <button>Add to Cart</button>
+        </div>
+
+        <!-- Product 4 -->
+        <div class="product">
+            <img src="../assets/images/bag4.jpg" alt="Bag 4">
+            <h3>Luxury Handbag 4</h3>
+            <p class="price">$200</p>
+            <button>Add to Cart</button>
+        </div>
+
+    </div>
+</div>
+
+<?php include '../includes/footer.php'; ?>

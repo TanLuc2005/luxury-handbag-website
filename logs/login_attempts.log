@@ -1,0 +1,4 @@
+[2026-03-24 06:18:10] | USERNAME: NguyenTanA           | IP: ::1             | STAGE: REGISTER   | RESULT: REGISTER_SUCCESS
+[2026-03-24 06:18:23] | USERNAME: NguyenTanA           | IP: ::1             | STAGE: PASSWORD   | RESULT: SUCCESS
+[2026-03-24 06:49:19] | USERNAME: LUCNGUYEN            | IP: ::1             | STAGE: REGISTER   | RESULT: REGISTER_SUCCESS
+[2026-03-24 06:49:26] | USERNAME: LUCNGUYEN            | IP: ::1             | STAGE: PASSWORD   | RESULT: SUCCESS

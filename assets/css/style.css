@@ -1,5 +1,5 @@
 /* ============================================================
-   style.css — LuxCarry Cybersecurity Research Platform
+   style.css — LuxCarry Cybersecurity Research Platform (FIXED)
    ============================================================ */
 
 /* ── Google Fonts ───────────────────────────────────────────── */
@@ -17,7 +17,7 @@
 /* ── Base ───────────────────────────────────────────────────── */
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #F9F9F9;
+    background-color: #e4e4e4;
     color: #222;
 }
 
@@ -28,7 +28,7 @@ h1, h2, h3, .navbar-brand {
 /* ── Research Banner ────────────────────────────────────────── */
 .research-banner {
     background: linear-gradient(90deg, #1A1A2E, #16213E, #0F3460);
-    color: #D6E4FF; /* Changed to a lighter shade for better contrast */
+    color: #D6E4FF;
     font-size: 0.75rem;
     letter-spacing: 0.05em;
 }
@@ -42,6 +42,7 @@ h1, h2, h3, .navbar-brand {
 .navbar-brand {
     font-size: 1.5rem;
     letter-spacing: 0.05em;
+    color: #fff !important;
 }
 
 /* ── Main content ───────────────────────────────────────────── */
@@ -49,12 +50,25 @@ h1, h2, h3, .navbar-brand {
     min-height: calc(100vh - 220px);
 }
 
-/* ── Hero Section ───────────────────────────────────────────── */
+/* ── Hero Section (FIX TEXT VISIBILITY) ─────────────────────── */
 .hero-section {
     background: linear-gradient(135deg, #0d0d1a 0%, #1A1A2E 40%, #16213E 70%, #0F3460 100%);
     border-bottom: 3px solid var(--lux-gold);
     position: relative;
     overflow: hidden;
+    color: #ffffff; /* FIX */
+}
+
+.hero-section p {
+    color: #d1d5db; /* FIX */
+}
+
+.hero-section a {
+    color: #60a5fa;
+}
+
+.hero-section a:hover {
+    color: #93c5fd;
 }
 
 .hero-section::before {
@@ -90,10 +104,6 @@ h1, h2, h3, .navbar-brand {
     object-fit: cover;
 }
 
-.product-img-placeholder {
-    height: 220px;
-}
-
 /* ── Avatar Circle ──────────────────────────────────────────── */
 .avatar-circle {
     width: 50px;
@@ -103,9 +113,6 @@ h1, h2, h3, .navbar-brand {
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 1.1rem;
-    letter-spacing: 0.05em;
-    flex-shrink: 0;
 }
 
 /* ── OTP Input ──────────────────────────────────────────────── */
@@ -114,7 +121,6 @@ h1, h2, h3, .navbar-brand {
     font-size: 1.8rem;
     border-radius: 12px;
     border: 2px solid #dee2e6;
-    transition: border-color 0.2s;
 }
 
 .otp-input:focus {
@@ -132,68 +138,61 @@ h1, h2, h3, .navbar-brand {
 
 .btn-warning:hover {
     background: #d4a832;
-    border-color: #d4a832;
-    color: #1A1A2E;
 }
 
-/* ── Footer ─────────────────────────────────────────────────── */
+/* ── Footer (FIX TEXT) ──────────────────────────────────────── */
 .footer {
     background: linear-gradient(90deg, #0d0d1a, #1A1A2E) !important;
     border-top: 1px solid rgba(240,192,64,0.15);
-    color: var(--lux-light); /* Ensures text is visible on dark background */
+    color: #ffffff;
 }
 
-/* ── Alert styling ──────────────────────────────────────────── */
-.alert {
-    border-radius: 12px;
+.footer p,
+.footer small,
+.footer a {
+    color: #ffffff;
+}
+
+.footer a:hover {
+    color: #93c5fd;
+}
+
+/* ── FIX TEXT MUTED (CRITICAL) ─────────────────────────────── */
+.text-muted {
+    color: #a89494 !important;
 }
 
 /* ── Form Controls ──────────────────────────────────────────── */
 .form-control:focus {
     border-color: var(--lux-gold);
-    box-shadow: 0 0 0 0.2rem rgba(240,192,64,0.2);
 }
 
+/* ── Fix input-group on dark UI ─────────────────────────────── */
 .input-group-text {
-    background: #f8f9fa;
-    border-color: #dee2e6;
-    color: #6c757d;
+    background: #1e293b;
+    color: #e5e7eb;
+    border-color: #334155;
 }
 
-/* ── Table ──────────────────────────────────────────────────── */
+/* ── Table ─────────────────────────────────────────────────── */
 .table thead.table-dark th {
     background: #1A1A2E;
-    border-color: rgba(255,255,255,0.1);
 }
 
-/* ── Code / Token display ───────────────────────────────────── */
+/* ── Code display ───────────────────────────────────────────── */
 code {
     background: rgba(240,192,64,0.1);
-    color: #856404;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.9em;
+    color: #facc15;
 }
 
-/* ── Responsive adjustments ─────────────────────────────────── */
+/* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 576px) {
     .hero-section {
         padding: 2rem 0;
     }
-    .otp-input {
-        font-size: 1.4rem;
-        letter-spacing: 0.4em;
-    }
-}
-.container {
-    padding: 20px;
 }
 
-.title {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
+/* ── Products grid ─────────────────────────────────────────── */
 .products {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -201,18 +200,9 @@ code {
 }
 
 .product {
-    background: white;
+    background: #ffffff;
     padding: 15px;
     border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.product img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    background: #ddd;
 }
 
 .product h3 {
@@ -223,16 +213,38 @@ code {
     color: red;
     font-weight: bold;
 }
+/* =========================
+   TEXT COLOR SEPARATION FIX
+   ========================= */
 
-button {
-    padding: 10px;
-    border: none;
-    background: black;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
+/* HERO (Cybersecurity Research Platform) */
+.hero-section h1,
+.hero-section h2,
+.hero-section h3,
+.hero-section p,
+.hero-section span {
+    color: #afacac !important;
 }
 
-button:hover {
-    background: #444;
+/* tăng độ nổi */
+.hero-section h1 {
+    font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+.hero-section p {
+    color: #e2e8f0 !important;
+}
+
+
+/* SECURITY FEATURES (nền sáng) */
+section:not(.hero-section) h1,
+section:not(.hero-section) h2,
+section:not(.hero-section) h3 {
+    color: #1f2937 !important; /* đen đậm */
+}
+
+section:not(.hero-section) p,
+section:not(.hero-section) span {
+    color: #6b7280 !important; /* xám dễ đọc */
 }

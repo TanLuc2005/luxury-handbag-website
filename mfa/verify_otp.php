@@ -19,6 +19,42 @@ $ip        = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCSRF();
 
+    $action = $_POST['action'] ?? '';
+
+    // ── [DEV MODE] Force Bypass OTP Verification ─────────────────────────────
+    if ($action === 'dev_skip_verify') {
+        $userId   = $_SESSION['mfa_pending_user_id'];
+        $username = $_SESSION['mfa_pending_username'];
+
+        $db   = getDB();
+        $stmt = $db->prepare('SELECT * FROM users WHERE UserID = ?');
+        $stmt->execute([$userId]);
+        $user = $stmt->fetch();
+
+        resetLoginAttempts($userId);
+        session_regenerate_id(true);
+
+        // Clear MFA pending state
+        unset(
+            $_SESSION['mfa_pending_user_id'],
+            $_SESSION['mfa_pending_username'],
+            $_SESSION['mfa_pending_secret']
+        );
+
+        // Set fully authenticated session
+        $_SESSION['user_id']       = $user['UserID'];
+        $_SESSION['username']      = $user['Username'];
+        $_SESSION['email']         = $user['Email'];
+        $_SESSION['mfa_enabled']   = true;
+        $_SESSION['authenticated'] = true;
+
+        writeLog($username, 'MFA_DEV_BYPASS', 'MFA', $ip);
+        setFlash('warning', '🛠️ [DEV MODE] Logged in via MFA Bypass.');
+        header('Location: ' . BASE_URL . '/user/dashboard.php');
+        exit;
+    }
+
+    // ── Standard OTP Verification ────────────────────────────────────────────
     $otp      = trim(str_replace(' ', '', $_POST['otp'] ?? ''));
     $userId   = $_SESSION['mfa_pending_user_id'];
     $username = $_SESSION['mfa_pending_username'];
@@ -98,7 +134,7 @@ require_once __DIR__ . '/../includes/header.php';
                                    pattern="\d{6}"
                                    inputmode="numeric"
                                    autocomplete="one-time-code"
-                                   required autofocus>
+                                   autofocus>
                             <div class="form-text text-center">
                                 Open <strong>Google Authenticator</strong> and enter the current code.
                             </div>
@@ -109,12 +145,19 @@ require_once __DIR__ . '/../includes/header.php';
                         </button>
                     </form>
 
+                    <form method="POST" class="mt-2">
+                        <?= csrfField() ?>
+                        <input type="hidden" name="action" value="dev_skip_verify">
+                        <button type="submit" class="btn btn-warning w-100 fw-bold py-2" style="border: 2px dashed #000; background-color: #ffc107; color: #000;">
+                            <i class="bi bi-bug-fill me-1"></i>[DEV] Skip Verification
+                        </button>
+                    </form>
+
                     <p class="text-center mt-3 mb-0 small">
                         Not you?
                         <a href="<?= BASE_URL ?>/auth/login.php">Back to login</a>
                     </p>
 
-                    <!-- Research annotation -->
                     <div class="alert alert-secondary mt-3 mb-0 small">
                         <strong>Research note:</strong> Even with correct credentials,
                         login fails here without the rotating OTP. This is the MFA

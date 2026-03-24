@@ -53,8 +53,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $_SESSION['cart'] = [];
-        setFlash('success', "Order #$orderId placed! Total: \$" . number_format($total, 2));
-        header('Location: ' . BASE_URL . '/user/dashboard.php');
+        setFlash('success', "Order #$orderId placed successfully! Total: \$" . number_format($total, 2));
+        
+        // Chuyển hướng về lại trang giỏ hàng thay vì dashboard
+        header('Location: ' . BASE_URL . '/shop/cart.php');
         exit;
     }
 

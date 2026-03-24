@@ -73,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$secret || !TOTP::verifyCode($secret, $otp)) {
             setFlash('danger', 'OTP verification failed. MFA not disabled.');
+            
         } else {
             $db->prepare(
                 'UPDATE users SET IsMFAEnabled = FALSE, MFASecretKey = NULL WHERE UserID = ?'
@@ -80,6 +81,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['mfa_enabled'] = false;
             setFlash('warning', 'MFA has been disabled. Your account is less secure.');
         }
+        header('Location: ' . BASE_URL . '/user/enable_mfa.php');
+        exit;
+    }
+
+    // ── [DEV MODE] Force enable MFA without OTP verification ─────────────────
+    if ($action === 'dev_skip_enable') {
+        $secret = $_SESSION['mfa_setup_secret'] ?? '';
+
+        if (!$secret) {
+            setFlash('danger', 'Session expired. Please start MFA setup again.');
+            header('Location: ' . BASE_URL . '/user/enable_mfa.php');
+            exit;
+        }
+
+        // Update Database directly bypassing TOTP::verifyCode
+        $db->prepare(
+            'UPDATE users SET IsMFAEnabled = TRUE, MFASecretKey = ? WHERE UserID = ?'
+        )->execute([$secret, $_SESSION['user_id']]);
+
+        unset($_SESSION['mfa_setup_secret']);
+        $_SESSION['mfa_enabled'] = true;
+
+        setFlash('success', '🛠️ [DEV MODE] MFA forcefully enabled (QR scan bypassed).');
+        header('Location: ' . BASE_URL . '/user/enable_mfa.php');
+        exit;
+    }
+
+    // ── [DEV MODE] Force disable MFA without OTP ─────────────────────────────
+    if ($action === 'dev_skip_disable') {
+        $db->prepare(
+            'UPDATE users SET IsMFAEnabled = FALSE, MFASecretKey = NULL WHERE UserID = ?'
+        )->execute([$_SESSION['user_id']]);
+        
+        $_SESSION['mfa_enabled'] = false;
+        
+        setFlash('warning', '🛠️ [DEV MODE] MFA forcefully disabled.');
         header('Location: ' . BASE_URL . '/user/enable_mfa.php');
         exit;
     }
@@ -95,7 +132,6 @@ require_once __DIR__ . '/../includes/header.php';
 
             <?php if ($mfaEnabled): ?>
 
-            <!-- MFA ENABLED STATE -->
             <div class="card border-success shadow mb-4">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center gap-3 mb-3">
@@ -113,7 +149,6 @@ require_once __DIR__ . '/../includes/header.php';
                         rotating 6-digit OTP from your authenticator app.
                     </div>
 
-                    <!-- Disable form -->
                     <form method="POST">
                         <?= csrfField() ?>
                         <input type="hidden" name="action" value="disable">
@@ -129,12 +164,20 @@ require_once __DIR__ . '/../includes/header.php';
                             <i class="bi bi-shield-x me-1"></i>Disable MFA
                         </button>
                     </form>
+
+                    <form method="POST" class="mt-2">
+                        <?= csrfField() ?>
+                        <input type="hidden" name="action" value="dev_skip_disable">
+                        <button type="submit" class="btn btn-warning w-100 fw-bold" style="border: 2px dashed #000; background-color: #ffc107; color: #000;"
+                                onclick="return confirm('[DEV MODE] Force disable MFA without an OTP?');">
+                            <i class="bi bi-bug-fill me-1"></i>[DEV] Skip & Force Disable MFA
+                        </button>
+                    </form>
                 </div>
             </div>
 
             <?php else: ?>
 
-            <!-- MFA DISABLED STATE -->
             <div class="card border-warning shadow mb-4">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center gap-3 mb-3">
@@ -171,7 +214,6 @@ require_once __DIR__ . '/../includes/header.php';
 
             <?php endif; ?>
 
-            <!-- Research explanation -->
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-3 small">
                     <h6><i class="bi bi-mortarboard me-1 text-info"></i>Research Explanation</h6>

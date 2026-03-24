@@ -56,6 +56,24 @@ require_once __DIR__ . '/../includes/header.php';
                             </code>
                         </p>
                     </div>
+                    <form method="POST" action="<?= BASE_URL ?>/user/enable_mfa.php">
+                        <?= csrfField() ?>
+                        <input type="hidden" name="action" value="confirm">
+                        <button type="submit" class="btn btn-success w-100 fw-bold py-2">
+                            <i class="bi bi-shield-check me-1"></i>Confirm & Activate MFA
+                        </button>
+                    </form>
+
+                    <form method="POST" action="<?= BASE_URL ?>/user/enable_mfa.php" class="mt-2">
+                        <?= csrfField() ?>
+                        <input type="hidden" name="action" value="dev_skip_enable">
+                        <button type="submit" class="btn btn-warning w-100 fw-bold py-2" style="border: 2px dashed #000;">
+                            <i class="bi bi-bug-fill me-1"></i>[DEV] Skip & Activate MFA
+                        </button>
+                    </form>
+
+                    <a href="<?= BASE_URL ?>/user/enable_mfa.php?cancel=1"
+                       class="btn btn-outline-secondary w-100 mt-2">Cancel</a>
 
                     <!-- Confirm OTP form -->
                     <form method="POST" action="<?= BASE_URL ?>/user/enable_mfa.php">

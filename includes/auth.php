@@ -4,10 +4,10 @@
  * Provides: session init, CSRF tokens, login checks, lockout logic
  */
 
+// 1. Khởi tạo Database
 require_once __DIR__ . '/../config/database.php';
 
-// ─── Session Hardening ────────────────────────────────────────────────────────
-
+// 2. ─── Session Hardening ────────────────────────────────────────────────────────
 if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
         'lifetime' => 0,
@@ -18,6 +18,9 @@ if (session_status() === PHP_SESSION_NONE) {
     ]);
     session_start();
 }
+
+// 3. ── TÍCH HỢP NGÔN NGỮ TOÀN CỤC ──
+require_once __DIR__ . '/lang.php'; 
 
 // ─── CSRF Protection ─────────────────────────────────────────────────────────
 

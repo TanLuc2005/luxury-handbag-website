@@ -1,81 +1,42 @@
 <?php
 /**
- * verify_otp.php — MFA Step 2: TOTP Verification
- * Only reachable after successful password auth (session guard).
+ * verify_otp.php — Verify Email OTP (Multi-language Support)
  */
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/TOTP.php';
+require_once __DIR__ . '/../includes/lang.php'; // Gọi file ngôn ngữ
 
-// Guard: must have completed password step first
 if (empty($_SESSION['mfa_pending_user_id'])) {
     header('Location: ' . BASE_URL . '/auth/login.php');
     exit;
 }
 
-$pageTitle = 'Two-Factor Authentication';
+$pageTitle = $lang['verify_title'];
 $error     = '';
 $ip        = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCSRF();
 
-    $action = $_POST['action'] ?? '';
-
-    // ── [DEV MODE] Force Bypass OTP Verification ─────────────────────────────
-    if ($action === 'dev_skip_verify') {
-        $userId   = $_SESSION['mfa_pending_user_id'];
-        $username = $_SESSION['mfa_pending_username'];
-
-        $db   = getDB();
-        $stmt = $db->prepare('SELECT * FROM users WHERE UserID = ?');
-        $stmt->execute([$userId]);
-        $user = $stmt->fetch();
-
-        resetLoginAttempts($userId);
-        session_regenerate_id(true);
-
-        // Clear MFA pending state
-        unset(
-            $_SESSION['mfa_pending_user_id'],
-            $_SESSION['mfa_pending_username'],
-            $_SESSION['mfa_pending_secret']
-        );
-
-        // Set fully authenticated session
-        $_SESSION['user_id']       = $user['UserID'];
-        $_SESSION['username']      = $user['Username'];
-        $_SESSION['email']         = $user['Email'];
-        $_SESSION['mfa_enabled']   = true;
-        $_SESSION['authenticated'] = true;
-
-        writeLog($username, 'MFA_DEV_BYPASS', 'MFA', $ip);
-        setFlash('warning', '🛠️ [DEV MODE] Logged in via MFA Bypass.');
-        header('Location: ' . BASE_URL . '/user/dashboard.php');
-        exit;
-    }
-
-    // ── Standard OTP Verification ────────────────────────────────────────────
     $otp      = trim(str_replace(' ', '', $_POST['otp'] ?? ''));
     $userId   = $_SESSION['mfa_pending_user_id'];
     $username = $_SESSION['mfa_pending_username'];
-    $secret   = $_SESSION['mfa_pending_secret'];
+    
+    $db   = getDB();
+    $stmt = $db->prepare('SELECT EmailOTP, EmailOTPExpires FROM users WHERE UserID = ?');
+    $stmt->execute([$userId]);
+    $mfaData = $stmt->fetch();
 
-    if (TOTP::verifyCode($secret, $otp)) {
-        // ── OTP valid → complete login ─────────────────────────
-        $db   = getDB();
+    if ($mfaData && $mfaData['EmailOTP'] === $otp && strtotime($mfaData['EmailOTPExpires']) > time()) {
+        
+        $db->prepare('UPDATE users SET EmailOTP = NULL, EmailOTPExpires = NULL WHERE UserID = ?')->execute([$userId]);
+        
         $stmt = $db->prepare('SELECT * FROM users WHERE UserID = ?');
         $stmt->execute([$userId]);
         $user = $stmt->fetch();
 
         resetLoginAttempts($userId);
         session_regenerate_id(true);
-
-        // Clear MFA pending state
-        unset(
-            $_SESSION['mfa_pending_user_id'],
-            $_SESSION['mfa_pending_username'],
-            $_SESSION['mfa_pending_secret']
-        );
+        unset($_SESSION['mfa_pending_user_id'], $_SESSION['mfa_pending_username'], $_SESSION['mfa_pending_email']);
 
         $_SESSION['user_id']       = $user['UserID'];
         $_SESSION['username']      = $user['Username'];
@@ -84,17 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['authenticated'] = true;
 
         writeLog($username, 'MFA_SUCCESS', 'MFA', $ip);
-        setFlash('success', 'Welcome back, ' . e($user['Username']) . '! ✓ MFA verified.');
+        setFlash('success', $lang['success_msg'] . e($user['Username']) . '.');
         header('Location: ' . BASE_URL . '/user/dashboard.php');
         exit;
 
     } else {
-        // ── OTP invalid ────────────────────────────────────────
-        $error = 'Invalid or expired OTP code. Check your authenticator app and try again.';
-        writeLog($_SESSION['mfa_pending_username'], 'MFA_FAILURE', 'MFA', $ip);
-
-        // Increment attempt counter on the user record
-        recordFailedAttempt($_SESSION['mfa_pending_user_id']);
+        $error = $lang['invalid_code'];
+        writeLog($username, 'MFA_FAILURE', 'MFA', $ip);
+        recordFailedAttempt($userId);
     }
 }
 
@@ -106,14 +64,19 @@ require_once __DIR__ . '/../includes/header.php';
         <div class="col-md-5 col-lg-4">
             <div class="card shadow-lg border-0">
                 <div class="card-body p-4">
+                    
+                    <div class="d-flex justify-content-end mb-2 small fw-bold">
+                        <a href="?lang=en" class="text-decoration-none <?= $current_lang === 'en' ? 'text-primary' : 'text-muted' ?>">EN</a>
+                        <span class="mx-1 text-muted">|</span>
+                        <a href="?lang=vi" class="text-decoration-none <?= $current_lang === 'vi' ? 'text-primary' : 'text-muted' ?>">VI</a>
+                    </div>
 
                     <div class="text-center mb-4">
-                        <div class="otp-icon-wrap mx-auto mb-3">
-                            <i class="bi bi-shield-lock-fill display-4 text-success"></i>
-                        </div>
-                        <h2>Two-Factor Auth</h2>
+                        <i class="bi bi-envelope-check-fill display-4 text-primary"></i>
+                        <h3 class="mt-2"><?= $lang['check_email'] ?></h3>
                         <p class="text-muted small">
-                            Verifying: <strong><?= e($_SESSION['mfa_pending_username'] ?? '') ?></strong>
+                            <?= $lang['sent_to'] ?><br>
+                            <strong><?= e($_SESSION['mfa_pending_email'] ?? '') ?></strong>
                         </p>
                     </div>
 
@@ -123,50 +86,59 @@ require_once __DIR__ . '/../includes/header.php';
                     </div>
                     <?php endif; ?>
 
-                    <form method="POST">
+                    <form method="POST" id="otpForm">
                         <?= csrfField() ?>
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">6-Digit OTP Code</label>
-                            <input type="text" name="otp" id="otp"
-                                   class="form-control form-control-lg text-center font-monospace otp-input"
-                                   placeholder="000000"
-                                   maxlength="6"
-                                   pattern="\d{6}"
-                                   inputmode="numeric"
-                                   autocomplete="one-time-code"
-                                   autofocus>
-                            <div class="form-text text-center">
-                                Open <strong>Google Authenticator</strong> and enter the current code.
-                            </div>
+                        <div class="mb-3">
+                            <input type="text" name="otp" id="otpInput" class="form-control form-control-lg text-center font-monospace otp-input"
+                                   placeholder="000000" maxlength="6" inputmode="numeric" autofocus required>
+                        </div>
+                        
+                        <div class="text-center mb-4">
+                            <span class="text-muted small" id="timerContainer">
+                                <?= $lang['time_left'] ?> <strong id="countdown" class="text-danger fs-6">60s</strong>
+                            </span>
                         </div>
 
-                        <button type="submit" class="btn btn-success w-100 fw-bold py-2">
-                            <i class="bi bi-check-circle me-1"></i>Verify & Sign In
+                        <button type="submit" id="verifyBtn" class="btn btn-primary w-100 fw-bold py-2">
+                            <i class="bi bi-check-circle me-1"></i><?= $lang['verify_btn'] ?>
                         </button>
                     </form>
-
-                    <form method="POST" class="mt-2">
-                        <?= csrfField() ?>
-                        <input type="hidden" name="action" value="dev_skip_verify">
-                        <button type="submit" class="btn btn-warning w-100 fw-bold py-2" style="border: 2px dashed #000; background-color: #ffc107; color: #000;">
-                            <i class="bi bi-bug-fill me-1"></i>[DEV] Skip Verification
-                        </button>
-                    </form>
-
+                    
                     <p class="text-center mt-3 mb-0 small">
-                        Not you?
-                        <a href="<?= BASE_URL ?>/auth/login.php">Back to login</a>
+                        <?= $lang['not_you'] ?>
+                        <a href="<?= BASE_URL ?>/auth/login.php"><?= $lang['back_login'] ?></a>
                     </p>
-
-                    <div class="alert alert-secondary mt-3 mb-0 small">
-                        <strong>Research note:</strong> Even with correct credentials,
-                        login fails here without the rotating OTP. This is the MFA
-                        protection layer that defeats credential stuffing attacks.
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let timeLeft = 60;
+    const timerElement = document.getElementById('countdown');
+    const timerContainer = document.getElementById('timerContainer');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const otpInput = document.getElementById('otpInput');
+
+    // Lấy chuỗi ngôn ngữ từ PHP sang JS
+    const msgExpired = "<?= $lang['expired'] ?>";
+    const msgLoginAgain = "<?= $lang['login_again'] ?>";
+    const urlLogin = "<?= BASE_URL ?>/auth/login.php";
+
+    const countdownInterval = setInterval(() => {
+        timeLeft--;
+        timerElement.innerText = timeLeft + 's';
+
+        if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            verifyBtn.disabled = true;
+            otpInput.disabled = true;
+            timerContainer.innerHTML = `<span class="text-danger fw-bold"><i class="bi bi-exclamation-circle me-1"></i>${msgExpired} <a href="${urlLogin}" class="text-danger text-decoration-underline">${msgLoginAgain}</a>.</span>`;
+        }
+    }, 1000);
+});
+</script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

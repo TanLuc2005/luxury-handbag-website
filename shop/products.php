@@ -4,7 +4,8 @@
  */
 require_once __DIR__ . '/../includes/auth.php';
 
-$pageTitle = 'Shop';
+// Sử dụng biến ngôn ngữ cho thẻ <title> của trình duyệt
+$pageTitle = $lang['nav_shop'] ?? 'Shop'; 
 $db        = getDB();
 
 $stmt = $db->query('SELECT * FROM products ORDER BY ProductName');
@@ -23,7 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     } else {
         $_SESSION['cart'][$productId] = 1;
     }
-    setFlash('success', 'Item added to cart!');
+    
+    // Đã thay thế thông báo cứng bằng biến ngôn ngữ
+    setFlash('success', $lang['item_added'] ?? 'Item added to cart!');
     header('Location: ' . BASE_URL . '/shop/products.php');
     exit;
 }
@@ -33,14 +36,14 @@ require_once __DIR__ . '/../includes/header.php';
 
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-grid3x3-gap text-warning me-2"></i>Luxury Handbags</h2>
-        <span class="text-muted small"><?= count($products) ?> products</span>
+        <h2><i class="bi bi-grid3x3-gap text-warning me-2"></i><?= $lang['shop_title'] ?? 'Luxury Handbags' ?></h2>
+        <span class="text-muted small"><?= count($products) ?> <?= $lang['shop_products'] ?? 'products' ?></span>
     </div>
 
     <?php if (empty($products)): ?>
     <div class="alert alert-info text-center py-5">
         <i class="bi bi-bag-x display-4 mb-3 d-block"></i>
-        No products yet. Add some via phpMyAdmin!
+        <?= $lang['empty_shop'] ?? 'No products yet. Add some via phpMyAdmin!' ?>
     </div>
     <?php else: ?>
     <div class="row g-4">
@@ -62,12 +65,12 @@ require_once __DIR__ . '/../includes/header.php';
                         <?= csrfField() ?>
                         <input type="hidden" name="product_id" value="<?= $p['ProductID'] ?>">
                         <button type="submit" name="add_to_cart" class="btn btn-warning btn-sm w-100">
-                            <i class="bi bi-cart-plus me-1"></i>Add to Cart
+                            <i class="bi bi-cart-plus me-1"></i><?= $lang['btn_add_cart'] ?? 'Add to Cart' ?>
                         </button>
                     </form>
                     <?php else: ?>
                     <a href="<?= BASE_URL ?>/auth/login.php" class="btn btn-outline-warning btn-sm w-100">
-                        <i class="bi bi-box-arrow-in-right me-1"></i>Login to Buy
+                        <i class="bi bi-box-arrow-in-right me-1"></i><?= $lang['btn_login_buy'] ?? 'Login to Buy' ?>
                     </a>
                     <?php endif; ?>
                 </div>

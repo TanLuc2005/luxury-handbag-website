@@ -1,5 +1,5 @@
 /* ============================================================
-   style.css — LuxCarry Cybersecurity Research Platform (FIXED)
+   style.css — LuxCarry Cybersecurity Research Platform (OPTIMIZED)
    ============================================================ */
 
 /* ── Google Fonts ───────────────────────────────────────────── */
@@ -17,7 +17,7 @@
 /* ── Base ───────────────────────────────────────────────────── */
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #e4e4e4;
+    background-color: #f1f3f5; /* Nền xám sáng nhạt, sang trọng hơn */
     color: #222;
 }
 
@@ -25,12 +25,17 @@ h1, h2, h3, .navbar-brand {
     font-family: 'Playfair Display', serif;
 }
 
-/* ── Research Banner ────────────────────────────────────────── */
+/* ── Research Banner (ĐÃ SỬA LỖI MÀU CHỮ) ──────────────────── */
 .research-banner {
-    background: linear-gradient(90deg, #1A1A2E, #16213E, #0F3460);
-    color: #D6E4FF;
+    background: #000000; /* Nền đen để tách biệt hoàn toàn */
+    color: #ffffff;      /* Chữ trắng rõ nét */
     font-size: 0.75rem;
     letter-spacing: 0.05em;
+    padding: 8px 0;
+}
+
+.research-banner strong {
+    color: var(--lux-gold); /* Nhấn mạnh bằng màu vàng đồng */
 }
 
 /* ── Navbar ─────────────────────────────────────────────────── */
@@ -42,7 +47,7 @@ h1, h2, h3, .navbar-brand {
 .navbar-brand {
     font-size: 1.5rem;
     letter-spacing: 0.05em;
-    color: #fff !important;
+    color: #ffffff !important;
 }
 
 /* ── Main content ───────────────────────────────────────────── */
@@ -50,25 +55,22 @@ h1, h2, h3, .navbar-brand {
     min-height: calc(100vh - 220px);
 }
 
-/* ── Hero Section (FIX TEXT VISIBILITY) ─────────────────────── */
+/* ── Hero Section ───────────────────────────────────────────── */
 .hero-section {
     background: linear-gradient(135deg, #0d0d1a 0%, #1A1A2E 40%, #16213E 70%, #0F3460 100%);
     border-bottom: 3px solid var(--lux-gold);
     position: relative;
     overflow: hidden;
-    color: #ffffff; /* FIX */
+    color: #ffffff;
 }
 
-.hero-section p {
-    color: #d1d5db; /* FIX */
+.hero-section h1 {
+    font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
 }
 
-.hero-section a {
-    color: #60a5fa;
-}
-
-.hero-section a:hover {
-    color: #93c5fd;
+.hero-section p.lead {
+    color: #e2e8f0;
 }
 
 .hero-section::before {
@@ -79,10 +81,12 @@ h1, h2, h3, .navbar-brand {
     pointer-events: none;
 }
 
-/* ── Cards ──────────────────────────────────────────────────── */
+/* ── Cards (Giao diện thẻ nền sáng) ─────────────────────────── */
 .card {
     border-radius: var(--border-radius-lg) !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background-color: #ffffff;
+    color: #1f2937; /* Chữ tối màu chuẩn chỉ cho nền thẻ trắng */
 }
 
 .card:hover {
@@ -138,9 +142,10 @@ h1, h2, h3, .navbar-brand {
 
 .btn-warning:hover {
     background: #d4a832;
+    color: #1A1A2E;
 }
 
-/* ── Footer (FIX TEXT) ──────────────────────────────────────── */
+/* ── Footer ─────────────────────────────────────────────────── */
 .footer {
     background: linear-gradient(90deg, #0d0d1a, #1A1A2E) !important;
     border-top: 1px solid rgba(240,192,64,0.15);
@@ -149,40 +154,37 @@ h1, h2, h3, .navbar-brand {
 
 .footer p,
 .footer small,
-.footer a {
-    color: #ffffff;
+.footer a.text-muted {
+    color: #a1a1aa !important; /* Xám sáng dễ đọc trên nền tối */
 }
 
-.footer a:hover {
-    color: #93c5fd;
+.footer a.text-muted:hover {
+    color: #ffffff !important;
 }
 
-/* ── FIX TEXT MUTED (CRITICAL) ─────────────────────────────── */
+/* ── Text Muted Global ──────────────────────────────────────── */
 .text-muted {
-    color: #a89494 !important;
+    color: #6b7280 !important; /* Xám trung tính cho nền sáng */
 }
 
 /* ── Form Controls ──────────────────────────────────────────── */
 .form-control:focus {
     border-color: var(--lux-gold);
+    box-shadow: 0 0 0 0.2rem rgba(240,192,64,0.2);
 }
 
-/* ── Fix input-group on dark UI ─────────────────────────────── */
 .input-group-text {
-    background: #1e293b;
-    color: #e5e7eb;
-    border-color: #334155;
-}
-
-/* ── Table ─────────────────────────────────────────────────── */
-.table thead.table-dark th {
-    background: #1A1A2E;
+    background: #f8f9fa;
+    color: #6c757d;
+    border-color: #dee2e6;
 }
 
 /* ── Code display ───────────────────────────────────────────── */
 code {
     background: rgba(240,192,64,0.1);
-    color: #facc15;
+    color: #856404;
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 
 /* ── Responsive ─────────────────────────────────────────────── */
@@ -190,61 +192,4 @@ code {
     .hero-section {
         padding: 2rem 0;
     }
-}
-
-/* ── Products grid ─────────────────────────────────────────── */
-.products {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-}
-
-.product {
-    background: #ffffff;
-    padding: 15px;
-    border-radius: 10px;
-}
-
-.product h3 {
-    margin: 10px 0;
-}
-
-.price {
-    color: red;
-    font-weight: bold;
-}
-/* =========================
-   TEXT COLOR SEPARATION FIX
-   ========================= */
-
-/* HERO (Cybersecurity Research Platform) */
-.hero-section h1,
-.hero-section h2,
-.hero-section h3,
-.hero-section p,
-.hero-section span {
-    color: #afacac !important;
-}
-
-/* tăng độ nổi */
-.hero-section h1 {
-    font-weight: 700;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-}
-
-.hero-section p {
-    color: #e2e8f0 !important;
-}
-
-
-/* SECURITY FEATURES (nền sáng) */
-section:not(.hero-section) h1,
-section:not(.hero-section) h2,
-section:not(.hero-section) h3 {
-    color: #1f2937 !important; /* đen đậm */
-}
-
-section:not(.hero-section) p,
-section:not(.hero-section) span {
-    color: #6b7280 !important; /* xám dễ đọc */
 }

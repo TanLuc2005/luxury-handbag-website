@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-md-4">
                 <h6 class="text-warning"><i class="bi bi-bag-heart-fill me-1"></i>LuxCarry</h6>
-                <p class="text-muted small">Premium handbag destination.<br>This is a cybersecurity research demo.</p>
+                <p class="text-muted small">Premium handbag destination.<br>This is a cybersecurity research.</p>
             </div>
             <div class="col-md-4">
                 <h6>Quick Links</h6>

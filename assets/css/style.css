@@ -1,11 +1,9 @@
 /* ============================================================
-   style.css — LuxCarry Cybersecurity Research Platform (OPTIMIZED)
+   style.css — LuxCarry Cybersecurity Research Platform (FIXED)
    ============================================================ */
 
-/* ── Google Fonts ───────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap');
 
-/* ── Root Variables ─────────────────────────────────────────── */
 :root {
     --lux-gold:    #F0C040;
     --lux-dark:    #1A1A2E;
@@ -14,10 +12,9 @@
     --border-radius-lg: 16px;
 }
 
-/* ── Base ───────────────────────────────────────────────────── */
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f1f3f5; /* Nền xám sáng nhạt, sang trọng hơn */
+    background-color: #f1f3f5;
     color: #222;
 }
 
@@ -25,171 +22,74 @@ h1, h2, h3, .navbar-brand {
     font-family: 'Playfair Display', serif;
 }
 
-/* ── Research Banner (ĐÃ SỬA LỖI MÀU CHỮ) ──────────────────── */
+/* ── Banner & Navbar ── */
 .research-banner {
-    background: #000000; /* Nền đen để tách biệt hoàn toàn */
-    color: #ffffff;      /* Chữ trắng rõ nét */
+    background: #000000;
+    color: #ffffff;
     font-size: 0.75rem;
     letter-spacing: 0.05em;
     padding: 8px 0;
 }
+.research-banner strong { color: var(--lux-gold); }
 
-.research-banner strong {
-    color: var(--lux-gold); /* Nhấn mạnh bằng màu vàng đồng */
-}
-
-/* ── Navbar ─────────────────────────────────────────────────── */
 .navbar {
     background: linear-gradient(90deg, #0d0d1a, #1A1A2E) !important;
     border-bottom: 1px solid rgba(240,192,64,0.2);
 }
+.navbar-brand { color: #ffffff !important; }
 
-.navbar-brand {
-    font-size: 1.5rem;
-    letter-spacing: 0.05em;
-    color: #ffffff !important;
-}
-
-/* ── Main content ───────────────────────────────────────────── */
-.main-content {
-    min-height: calc(100vh - 220px);
-}
-
-/* ── Hero Section ───────────────────────────────────────────── */
+/* ── Hero Section ── */
 .hero-section {
     background: linear-gradient(135deg, #0d0d1a 0%, #1A1A2E 40%, #16213E 70%, #0F3460 100%);
     border-bottom: 3px solid var(--lux-gold);
-    position: relative;
-    overflow: hidden;
     color: #ffffff;
 }
+.hero-section h1 { text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
 
-.hero-section h1 {
-    font-weight: 700;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-}
-
-.hero-section p.lead {
-    color: #e2e8f0;
-}
-
-.hero-section::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 70% 50%, rgba(240,192,64,0.08) 0%, transparent 60%);
-    pointer-events: none;
-}
-
-/* ── Cards (Giao diện thẻ nền sáng) ─────────────────────────── */
+/* ── Cards & Products ── */
 .card {
     border-radius: var(--border-radius-lg) !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     background-color: #ffffff;
-    color: #1f2937; /* Chữ tối màu chuẩn chỉ cho nền thẻ trắng */
+    color: #1f2937;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+.product-img { height: 220px; object-fit: cover; }
+
+/* ── Dark Sections (Fix tàng hình chữ) ── */
+.bg-dark {
+    background-color: #1A1A2E !important;
+    color: #ffffff !important;
+}
+.bg-dark h3, .bg-dark p { color: #ffffff !important; }
+
+/* Chữa lỗi Badge bị mất chữ */
+.badge.bg-secondary {
+    background-color: #4b5563 !important;
+    color: #ffffff !important; 
+    font-weight: 500;
 }
 
-.card:hover {
-    transform: translateY(-2px);
-}
-
-/* ── Product Cards ──────────────────────────────────────────── */
-.product-card {
-    overflow: hidden;
-}
-
-.product-card:hover {
-    box-shadow: 0 8px 30px rgba(240,192,64,0.18) !important;
-    transform: translateY(-4px);
-}
-
-.product-img {
-    height: 220px;
-    object-fit: cover;
-}
-
-/* ── Avatar Circle ──────────────────────────────────────────── */
-.avatar-circle {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-}
-
-/* ── OTP Input ──────────────────────────────────────────────── */
-.otp-input {
-    letter-spacing: 0.6em;
-    font-size: 1.8rem;
-    border-radius: 12px;
-    border: 2px solid #dee2e6;
-}
-
-.otp-input:focus {
-    border-color: #198754;
-    box-shadow: 0 0 0 0.2rem rgba(25,135,84,0.2);
-}
-
-/* ── Buttons ────────────────────────────────────────────────── */
+/* ── Buttons & Forms ── */
 .btn-warning {
     background: var(--lux-gold);
     border-color: var(--lux-gold);
     color: #1A1A2E;
     font-weight: 600;
 }
+.btn-warning:hover { background: #d4a832; color: #1A1A2E; }
 
-.btn-warning:hover {
-    background: #d4a832;
-    color: #1A1A2E;
+.otp-input {
+    letter-spacing: 0.6em;
+    font-size: 1.8rem;
+    border-radius: 12px;
 }
 
-/* ── Footer ─────────────────────────────────────────────────── */
+/* ── Footer ── */
 .footer {
     background: linear-gradient(90deg, #0d0d1a, #1A1A2E) !important;
     border-top: 1px solid rgba(240,192,64,0.15);
-    color: #ffffff;
 }
-
-.footer p,
-.footer small,
-.footer a.text-muted {
-    color: #a1a1aa !important; /* Xám sáng dễ đọc trên nền tối */
-}
-
-.footer a.text-muted:hover {
-    color: #ffffff !important;
-}
-
-/* ── Text Muted Global ──────────────────────────────────────── */
-.text-muted {
-    color: #6b7280 !important; /* Xám trung tính cho nền sáng */
-}
-
-/* ── Form Controls ──────────────────────────────────────────── */
-.form-control:focus {
-    border-color: var(--lux-gold);
-    box-shadow: 0 0 0 0.2rem rgba(240,192,64,0.2);
-}
-
-.input-group-text {
-    background: #f8f9fa;
-    color: #6c757d;
-    border-color: #dee2e6;
-}
-
-/* ── Code display ───────────────────────────────────────────── */
-code {
-    background: rgba(240,192,64,0.1);
-    color: #856404;
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-
-/* ── Responsive ─────────────────────────────────────────────── */
-@media (max-width: 576px) {
-    .hero-section {
-        padding: 2rem 0;
-    }
-}
+.footer h5, .footer h6 { color: #ffffff; }
+.footer p, .footer .text-muted, .footer a.text-muted { color: #a1a1aa !important; }
+.footer a.text-muted:hover { color: #ffffff !important; }

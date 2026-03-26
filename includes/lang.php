@@ -26,15 +26,50 @@ $translations = [
         'footer_text'   => 'Cybersecurity Research Project | Not for commercial use',
         'research_banner'=> 'CYBERSECURITY RESEARCH ENVIRONMENT — For educational purposes only',
         
-        // Shop Page
+        // Hero Section (Trang chủ)
+        'hero_subtitle'      => 'Discover our curated collection of premium luxury handbags.',
+        'mfa_demo_badge'     => 'MFA Research Demo',
+        'btn_shop_now'       => 'Shop Now',
+        'btn_dashboard'      => 'Dashboard',
+        
+        // Security Features (Trang chủ)
+        'sec_features_title' => 'Security Features',
+        'feat_mfa_title'     => 'Email MFA',
+        'feat_mfa_desc'      => 'One-Time Passwords delivered securely via email for two-factor authentication.',
+        'feat_hash_title'    => 'bcrypt Hashing',
+        'feat_hash_desc'     => 'Passwords hashed with cost-12 bcrypt. Never stored in plain text.',
+        'feat_lock_title'    => 'Account Lockout',
+        'feat_lock_desc'     => 'Accounts lock after 5 failed attempts for 10 minutes to block brute force.',
+        'feat_csrf_title'    => 'CSRF Protection',
+        'feat_csrf_desc'     => 'All forms protected by cryptographic CSRF tokens.',
+        'feat_pdo_title'     => 'PDO Prepared',
+        'feat_pdo_desc'      => 'All queries use PDO prepared statements to prevent SQL injection.',
+        'feat_log_title'     => 'Attack Logging',
+        'feat_log_desc'      => 'All login events logged with timestamp, IP, username, and result.',
+
+        // Research Platform Section (Trang chủ)
+        'res_platform_title' => 'Cybersecurity Research Platform',
+        'res_platform_desc'  => 'This platform demonstrates MFA effectiveness against account takeover attacks. Use the Python simulators to observe how brute force and credential stuffing are defeated by Email-based MFA.',
+        'tag_brute_force'    => 'Brute Force Simulation',
+        'tag_cred_stuffing'  => 'Credential Stuffing',
+        'tag_mfa_bypass'     => 'MFA Bypass Resistance',
+        'tag_logging'        => 'Login Attempt Logging',
+
+        // Footer
+        'footer_desc'        => 'Premium handbag destination. This is a cybersecurity research environment.',
+        'footer_quick_links' => 'Quick Links',
+        'footer_sec_research'=> 'Security Research',
+        'footer_mfa_demo'    => 'MFA Demo • Brute Force Simulation',
+        'footer_cred_analysis'=> 'Credential Stuffing Analysis',
+        'footer_research_only'=> 'Research Only',
+
+        // Các trang khác...
         'shop_title'    => 'Luxury Handbags',
         'shop_products' => 'products',
         'btn_add_cart'  => 'Add to Cart',
         'btn_login_buy' => 'Login to Buy',
         'empty_shop'    => 'No products yet. Add some via phpMyAdmin!',
         'item_added'    => 'Item added to cart!',
-        
-        // Login Page
         'login_title'   => 'Sign In',
         'login_desc'    => 'Access your LuxCarry account',
         'lbl_username'  => 'Username',
@@ -42,8 +77,6 @@ $translations = [
         'btn_signin'    => 'Sign In',
         'forgot_pass'   => 'Forgot password?',
         'create_acc'    => 'Create account',
-        
-        // MFA Verify (Đã bổ sung đầy đủ)
         'verify_title'  => 'Email Verification',
         'check_email'   => 'Check Your Email',
         'sent_to'       => 'We sent a 6-digit code to:',
@@ -53,7 +86,7 @@ $translations = [
         'login_again'   => 'Log in again',
         'not_you'       => 'Not you?',
         'back_login'    => 'Back to login',
-        'invalid_code'  => 'Invalid or expired code. Please check your email and try again.',
+        'invalid_code'  => 'Invalid or expired code. Please try again.',
         'success_msg'   => 'MFA Email Verified! Welcome back, '
     ],
     'vi' => [
@@ -69,15 +102,50 @@ $translations = [
         'footer_text'   => 'Dự án Nghiên cứu An ninh mạng | Không dùng cho mục đích thương mại',
         'research_banner'=> 'MÔI TRƯỜNG NGHIÊN CỨU AN NINH MẠNG — Chỉ dành cho mục đích giáo dục',
         
-        // Shop Page
+        // Hero Section (Trang chủ)
+        'hero_subtitle'      => 'Khám phá bộ sưu tập túi xách cao cấp được tuyển chọn của chúng tôi.',
+        'mfa_demo_badge'     => 'Bản trình diễn Nghiên cứu MFA',
+        'btn_shop_now'       => 'Mua sắm ngay',
+        'btn_dashboard'      => 'Bảng điều khiển',
+        
+        // Security Features (Trang chủ)
+        'sec_features_title' => 'Các tính năng Bảo mật',
+        'feat_mfa_title'     => 'Xác thực MFA qua Email',
+        'feat_mfa_desc'      => 'Mã dùng một lần (OTP) được gửi an toàn qua email để xác thực hai yếu tố.',
+        'feat_hash_title'    => 'Băm mật khẩu bcrypt',
+        'feat_hash_desc'     => 'Mật khẩu được băm bằng thuật toán bcrypt. Không bao giờ lưu trữ dạng văn bản gốc.',
+        'feat_lock_title'    => 'Khóa tài khoản',
+        'feat_lock_desc'     => 'Tài khoản sẽ bị khóa 10 phút sau 5 lần đăng nhập sai nhằm chặn tấn công vét cạn.',
+        'feat_csrf_title'    => 'Bảo vệ CSRF',
+        'feat_csrf_desc'     => 'Tất cả các biểu mẫu được bảo vệ bằng mã thông báo CSRF mật mã học.',
+        'feat_pdo_title'     => 'Truy vấn PDO',
+        'feat_pdo_desc'      => 'Sử dụng PDO Prepared Statements để ngăn chặn triệt để lỗ hổng SQL Injection.',
+        'feat_log_title'     => 'Ghi log Tấn công',
+        'feat_log_desc'      => 'Mọi sự kiện đăng nhập đều được ghi lại với mốc thời gian, IP, tên người dùng và kết quả.',
+
+        // Research Platform Section (Trang chủ)
+        'res_platform_title' => 'Nền tảng Nghiên cứu An ninh mạng',
+        'res_platform_desc'  => 'Hệ thống này chứng minh tính hiệu quả của MFA trước các cuộc tấn công chiếm đoạt tài khoản. Sử dụng trình mô phỏng Python để quan sát cách MFA qua Email đánh bại Brute Force và Credential Stuffing.',
+        'tag_brute_force'    => 'Mô phỏng Brute Force',
+        'tag_cred_stuffing'  => 'Tấn công Nhồi nhét thông tin (Credential Stuffing)',
+        'tag_mfa_bypass'     => 'Kháng lại nỗ lực vượt rào MFA',
+        'tag_logging'        => 'Ghi log Nỗ lực đăng nhập',
+
+        // Footer
+        'footer_desc'        => 'Điểm đến cho túi xách cao cấp. Đây là môi trường nghiên cứu an ninh mạng.',
+        'footer_quick_links' => 'Liên kết nhanh',
+        'footer_sec_research'=> 'Nghiên cứu Bảo mật',
+        'footer_mfa_demo'    => 'MFA Demo • Mô phỏng Brute Force',
+        'footer_cred_analysis'=> 'Phân tích Credential Stuffing',
+        'footer_research_only'=> 'Chỉ dành cho nghiên cứu',
+
+        // Các trang khác...
         'shop_title'    => 'Túi xách Cao cấp',
         'shop_products' => 'sản phẩm',
         'btn_add_cart'  => 'Thêm vào giỏ',
         'btn_login_buy' => 'Đăng nhập để mua',
         'empty_shop'    => 'Chưa có sản phẩm nào!',
         'item_added'    => 'Đã thêm sản phẩm vào giỏ!',
-        
-        // Login Page
         'login_title'   => 'Đăng nhập',
         'login_desc'    => 'Truy cập tài khoản LuxCarry của bạn',
         'lbl_username'  => 'Tên đăng nhập',
@@ -85,8 +153,6 @@ $translations = [
         'btn_signin'    => 'Đăng nhập',
         'forgot_pass'   => 'Quên mật khẩu?',
         'create_acc'    => 'Tạo tài khoản',
-        
-        // MFA Verify (Đã bổ sung đầy đủ)
         'verify_title'  => 'Xác thực Email',
         'check_email'   => 'Kiểm tra hộp thư',
         'sent_to'       => 'Chúng tôi đã gửi mã 6 số đến:',
@@ -96,7 +162,7 @@ $translations = [
         'login_again'   => 'Đăng nhập lại',
         'not_you'       => 'Không phải bạn?',
         'back_login'    => 'Quay lại đăng nhập',
-        'invalid_code'  => 'Mã không hợp lệ hoặc đã hết hạn. Vui lòng kiểm tra email và thử lại.',
+        'invalid_code'  => 'Mã không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.',
         'success_msg'   => 'Xác thực MFA thành công! Chào mừng trở lại, '
     ]
 ];

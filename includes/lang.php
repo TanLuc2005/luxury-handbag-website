@@ -87,8 +87,33 @@ $translations = [
         'not_you'       => 'Not you?',
         'back_login'    => 'Back to login',
         'invalid_code'  => 'Invalid or expired code. Please try again.',
-        'success_msg'   => 'MFA Email Verified! Welcome back, '
+        'success_msg'   => 'MFA Email Verified! Welcome back, ',
+        
+        // Profile Page
+        'profile_title'  => 'Profile',
+        'member_since'   => 'Member since',
+        'mfa_active'     => 'MFA Active',
+        'mfa_inactive'   => 'MFA Inactive',
+        'update_email'   => 'Update Email',
+        'email_address'  => 'Email Address',
+        'change_password'=> 'Change Password',
+        'current_pass'   => 'Current Password',
+        'new_pass'       => 'New Password',
+        'confirm_pass'   => 'Confirm New Password',
+        'two_factor_auth'=> 'Two-Factor Authentication',
+        'status_enabled' => 'Status: Enabled',
+        'status_disabled'=> 'Status: Disabled',
+        'manage_mfa'     => 'Manage MFA',
+
+        // AI Assistant
+        'nav_ai'        => 'AI Assistant',
+        'ai_title'      => 'Security AI Assistant',
+        'ai_prompt'     => 'Enter a query or paste attack logs for analysis:',
+        'ai_placeholder'=> 'E.g., What is Credential Stuffing? How does MFA prevent it?',
+        'ai_btn_ask'    => 'Ask Gemini',
+        'ai_response'   => 'Gemini Response:'
     ],
+    
     'vi' => [
         // Navbar & Global
         'nav_shop'      => 'Cửa hàng',
@@ -163,7 +188,31 @@ $translations = [
         'not_you'       => 'Không phải bạn?',
         'back_login'    => 'Quay lại đăng nhập',
         'invalid_code'  => 'Mã không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.',
-        'success_msg'   => 'Xác thực MFA thành công! Chào mừng trở lại, '
+        'success_msg'   => 'Xác thực MFA thành công! Chào mừng trở lại, ',
+
+        // Profile Page
+        'profile_title'  => 'Hồ sơ cá nhân',
+        'member_since'   => 'Thành viên từ',
+        'mfa_active'     => 'Đã bật MFA',
+        'mfa_inactive'   => 'Chưa bật MFA',
+        'update_email'   => 'Cập nhật Email',
+        'email_address'  => 'Địa chỉ Email',
+        'change_password'=> 'Đổi mật khẩu',
+        'current_pass'   => 'Mật khẩu hiện tại',
+        'new_pass'       => 'Mật khẩu mới',
+        'confirm_pass'   => 'Xác nhận mật khẩu mới',
+        'two_factor_auth'=> 'Xác thực hai yếu tố',
+        'status_enabled' => 'Trạng thái: Đã bật',
+        'status_disabled'=> 'Trạng thái: Đã tắt',
+        'manage_mfa'     => 'Quản lý MFA',
+
+        // AI Assistant
+        'nav_ai'        => 'Trợ lý AI',
+        'ai_title'      => 'Trợ lý AI Phân tích Bảo mật',
+        'ai_prompt'     => 'Nhập câu hỏi hoặc dán log tấn công để phân tích:',
+        'ai_placeholder'=> 'Ví dụ: Credential Stuffing là gì? MFA ngăn chặn nó như thế nào?',
+        'ai_btn_ask'    => 'Hỏi Gemini',
+        'ai_response'   => 'Gemini trả lời:'
     ]
 ];
 

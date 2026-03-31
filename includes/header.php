@@ -85,6 +85,10 @@ $current_lang = $_SESSION['lang'] ?? 'en';
                             <li><a class="dropdown-item" href="<?= BASE_URL ?>/user/enable_mfa.php">
                                 <i class="bi bi-shield-lock me-1"></i><?= $lang['nav_mfa'] ?? 'MFA Settings' ?>
                             </a></li>
+                            
+                            <li><a class="dropdown-item" href="<?= BASE_URL ?>/user/ai_assistant.php">
+                                <i class="bi bi-robot me-1 text-primary"></i><?= $lang['nav_ai'] ?? 'AI Assistant' ?>
+                            </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item text-danger" href="<?= BASE_URL ?>/auth/logout.php">
                                 <i class="bi bi-box-arrow-right me-1"></i><?= $lang['nav_logout'] ?? 'Logout' ?>

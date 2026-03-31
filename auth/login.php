@@ -1,6 +1,6 @@
 <?php
 /**
- * login.php — User Login (MFA via Email)
+ * login.php — User Login (MFA via Email) & Risk-Based Alert
  */
 require_once __DIR__ . '/../includes/auth.php';
 redirectIfLoggedIn();
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             writeLog($username, 'FAILURE_NO_USER', 'PASSWORD', $ip);
 
         } elseif (isAccountLocked($user['UserID'])) {
-            $error = 'Account locked due to too many failed attempts. Try again in 10 minutes.';
+            $error = 'Account locked due to too many failed attempts. Try again in 5 minutes.';
             writeLog($username, 'LOCKED', 'PASSWORD', $ip);
 
         } elseif (!password_verify($password, $user['PasswordHash'])) {
@@ -37,6 +37,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Invalid username or password.' .
                      ($remaining > 0 ? " ($remaining attempts remaining)" : ' Account now locked.');
             writeLog($username, 'FAILURE_BAD_PASSWORD', 'PASSWORD', $ip);
+
+            // ── BẮT ĐẦU: MODULE CẢNH BÁO BẢO MẬT QUA EMAIL ──
+            if ($remaining <= 0) {
+                $attacker_ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown IP';
+                $user_agent  = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown Browser';
+                $lock_time   = date('Y-m-d H:i:s');
+
+                $alert_subject = "⚠️ [CẢNH BÁO BẢO MẬT] Tài khoản LuxCarry của bạn đã bị khóa";
+                $alert_body = "
+                    <div style='font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px;'>
+                        <h2 style='color: #d9534f; border-bottom: 2px solid #d9534f; padding-bottom: 10px;'>Cảnh báo Bảo mật từ LuxCarry</h2>
+                        <p>Chào <strong>" . htmlspecialchars($user['Username']) . "</strong>,</p>
+                        <p>Hệ thống phòng thủ của chúng tôi vừa tự động <strong>khóa tài khoản của bạn trong 5 phút</strong> do phát hiện có nhiều lần nhập sai mật khẩu liên tiếp.</p>
+                        
+                        <div style='background-color: #fef0f0; border-left: 4px solid #d9534f; padding: 15px; margin: 20px 0;'>
+                            <h4 style='margin-top: 0; color: #d9534f;'>Chi tiết lượt truy cập bất thường:</h4>
+                            <ul style='list-style-type: none; padding-left: 0; margin-bottom: 0;'>
+                                <li style='margin-bottom: 8px;'>🕒 <strong>Thời gian:</strong> {$lock_time}</li>
+                                <li style='margin-bottom: 8px;'>🌐 <strong>Địa chỉ IP (Kẻ tấn công):</strong> {$attacker_ip}</li>
+                                <li>💻 <strong>Thiết bị/Trình duyệt:</strong> {$user_agent}</li>
+                            </ul>
+                        </div>
+                        
+                        <p><strong>Khuyến nghị an toàn:</strong></p>
+                        <ul>
+                            <li>Nếu đây là bạn (do quên mật khẩu): Vui lòng đợi 5 phút để hệ thống mở khóa.</li>
+                            <li><strong>Nếu đây KHÔNG PHẢI là bạn:</strong> Một cuộc tấn công Brute Force đang nhắm vào tài khoản của bạn. Vui lòng đăng nhập và đổi mật khẩu ngay lập tức sau khi tài khoản được mở khóa!</li>
+                        </ul>
+                        <p style='margin-top: 30px; font-size: 0.9em; color: #777;'>
+                            Trân trọng,<br>Đội ngũ Phân tích Bảo mật LuxCarry
+                        </p>
+                    </div>
+                ";
+
+                require_once __DIR__ . '/../includes/SMTP.php';
+                try {
+                    SMTP::sendMail($user['Email'], $alert_subject, $alert_body);
+                } catch (Exception $e) {
+                    error_log("Security Alert Email failed to send: " . $e->getMessage());
+                }
+            }
+            // ── KẾT THÚC: MODULE CẢNH BÁO BẢO MẬT ──
 
         } else {
             // ── PASSWORD CORRECT ──────────────────────

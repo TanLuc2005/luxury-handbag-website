@@ -78,7 +78,7 @@ function redirectIfLoggedIn(): void {
 // ─── Account Lockout ──────────────────────────────────────────────────────────
 
 define('MAX_ATTEMPTS', 5);
-define('LOCKOUT_SECONDS', 600); // 10 minutes
+define('LOCKOUT_SECONDS', 300); // 5 minutes
 
 /**
  * Check whether an account is currently locked due to too many failed attempts.

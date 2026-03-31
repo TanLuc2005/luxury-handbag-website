@@ -55,12 +55,18 @@ class SMTP {
         fwrite($socket, "DATA\r\n");
         fgets($socket, 515);
 
+        // ── BẮT ĐẦU: KỸ THUẬT DYNAMIC CONTENT-TYPE ──
+        // Tự động nhận diện xem nội dung là HTML hay Text thường để gắn Header phù hợp
+        $isHtml = (strpos($message, '<div') !== false || strpos($message, '<p>') !== false || strpos($message, '<h') !== false);
+        $contentType = $isHtml ? "text/html" : "text/plain";
+        // ── KẾT THÚC ──
+
         // Prepare Anti-Spam Headers
         $headers  = "From: LuxCarry Security <$username>\r\n";
         $headers .= "To: <$to>\r\n";
         $headers .= "Subject: $subject\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
-        $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+        $headers .= "Content-Type: $contentType; charset=UTF-8\r\n"; // Gắn biến động vào đây
 
         // Inject Payload via Socket (End with "\r\n.\r\n")
         $payload = $headers . "\r\n" . $message . "\r\n.\r\n";

@@ -1,0 +1,10 @@
+[2026-03-31 14:41:08] | USERNAME: lucnguyen            | IP: 127.0.0.1       | STAGE: PASSWORD   | RESULT: FAILURE | PASSWORD_TRIED: password
+[2026-03-31 14:41:08] | USERNAME: lucnguyen            | IP: 127.0.0.1       | STAGE: PASSWORD   | RESULT: FAILURE | PASSWORD_TRIED: 123456
+[2026-03-31 14:41:09] | USERNAME: lucnguyen            | IP: 127.0.0.1       | STAGE: PASSWORD   | RESULT: FAILURE | PASSWORD_TRIED: password123
+[2026-03-31 14:41:10] | USERNAME: lucnguyen            | IP: 127.0.0.1       | STAGE: PASSWORD   | RESULT: FAILURE | PASSWORD_TRIED: admin
+[2026-03-31 14:41:11] | USERNAME: lucnguyen            | IP: 127.0.0.1       | STAGE: PASSWORD   | RESULT: ACCOUNT_LOCKED | PASSWORD_TRIED: letmein
+[2026-03-31 14:53:50] | USERNAME: lucnguyen            | IP: 127.0.0.1       | STAGE: PASSWORD   | RESULT: ACCOUNT_LOCKED | PASSWORD_TRIED: password
+[2026-03-31 15:15:56] | USERNAME: lucnguyen            | IP: 127.0.0.1       | STAGE: PASSWORD   | RESULT: FAILURE | PASSWORD_TRIED: password
+[2026-03-31 15:15:56] | USERNAME: lucnguyen            | IP: 127.0.0.1       | STAGE: PASSWORD   | RESULT: FAILURE | PASSWORD_TRIED: 123456
+[2026-03-31 15:15:57] | USERNAME: lucnguyen            | IP: 127.0.0.1       | STAGE: PASSWORD   | RESULT: FAILURE | PASSWORD_TRIED: password123
+[2026-03-31 15:16:02] | USERNAME: lucnguyen            | IP: 127.0.0.1       | STAGE: PASSWORD   | RESULT: ACCOUNT_LOCKED | PASSWORD_TRIED: admin

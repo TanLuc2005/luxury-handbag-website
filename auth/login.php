@@ -44,29 +44,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $user_agent  = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown Browser';
                 $lock_time   = date('Y-m-d H:i:s');
 
-                $alert_subject = "⚠️ [CẢNH BÁO BẢO MẬT] Tài khoản LuxCarry của bạn đã bị khóa";
+                $alert_subject = "⚠️ [SECURITY WARNING] Your LuxCarry account has been locked.";
                 $alert_body = "
                     <div style='font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px;'>
-                        <h2 style='color: #d9534f; border-bottom: 2px solid #d9534f; padding-bottom: 10px;'>Cảnh báo Bảo mật từ LuxCarry</h2>
-                        <p>Chào <strong>" . htmlspecialchars($user['Username']) . "</strong>,</p>
-                        <p>Hệ thống phòng thủ của chúng tôi vừa tự động <strong>khóa tài khoản của bạn trong 5 phút</strong> do phát hiện có nhiều lần nhập sai mật khẩu liên tiếp.</p>
+                        <h2 style='color: #d9534f; border-bottom: 2px solid #d9534f; padding-bottom: 10px;'>LuxCarry Security Warning</h2>
+                        <p>Hello <strong>" . htmlspecialchars($user['Username']) . "</strong>,</p>
+                        <p>Our defense system has just automatically <strong>locked your account for 5 minutes </strong> The reason is that the system detected many unusual consecutive wrong password attempts.</p>
                         
                         <div style='background-color: #fef0f0; border-left: 4px solid #d9534f; padding: 15px; margin: 20px 0;'>
-                            <h4 style='margin-top: 0; color: #d9534f;'>Chi tiết lượt truy cập bất thường:</h4>
+                            <h4 style='margin-top: 0; color: #d9534f;'>Details of unusual visits:</h4>
                             <ul style='list-style-type: none; padding-left: 0; margin-bottom: 0;'>
-                                <li style='margin-bottom: 8px;'>🕒 <strong>Thời gian:</strong> {$lock_time}</li>
-                                <li style='margin-bottom: 8px;'>🌐 <strong>Địa chỉ IP (Kẻ tấn công):</strong> {$attacker_ip}</li>
-                                <li>💻 <strong>Thiết bị/Trình duyệt:</strong> {$user_agent}</li>
+                                <li style='margin-bottom: 8px;'>🕒 <strong>Time:</strong> {$lock_time}</li>
+                                <li style='margin-bottom: 8px;'>🌐 <strong>IP Address (Attacker):</strong> {$attacker_ip}</li>
+                                <li>💻 <strong>Device/Browser:</strong> {$user_agent}</li>
                             </ul>
                         </div>
                         
-                        <p><strong>Khuyến nghị an toàn:</strong></p>
+                        <p><strong>Safety recommendations:</strong></p>
                         <ul>
-                            <li>Nếu đây là bạn (do quên mật khẩu): Vui lòng đợi 5 phút để hệ thống mở khóa.</li>
-                            <li><strong>Nếu đây KHÔNG PHẢI là bạn:</strong> Một cuộc tấn công Brute Force đang nhắm vào tài khoản của bạn. Vui lòng đăng nhập và đổi mật khẩu ngay lập tức sau khi tài khoản được mở khóa!</li>
+                            <li>If this is you (due to forgotten password): Please wait 5 minutes for the system to unlock.</li>
+                            <li><strong>If this is NOT you:</strong> A brute force attack is targeting your account. Please log in and change your password immediately after your account is unlocked!</li>
                         </ul>
                         <p style='margin-top: 30px; font-size: 0.9em; color: #777;'>
-                            Trân trọng,<br>Đội ngũ Phân tích Bảo mật LuxCarry
+                            Best regards,<br>LuxCarry Security Analysis Team
                         </p>
                     </div>
                 ";

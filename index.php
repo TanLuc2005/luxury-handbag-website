@@ -18,7 +18,7 @@ require_once __DIR__ . '/includes/header.php';
         </p>
         <div class="mb-4">
             <span class="badge bg-info text-dark px-3 py-2 rounded-pill">
-                <?= $lang['mfa_demo_badge'] ?? 'MFA Research Demo' ?>
+                <?= $lang['mfa_demo_badge'] ?? 'MFA Research' ?>
             </span>
         </div>
         <div class="d-flex justify-content-center gap-3">
@@ -64,7 +64,7 @@ require_once __DIR__ . '/includes/header.php';
                     <div class="card-body">
                         <i class="bi bi-person-x-fill display-4 text-danger mb-3"></i>
                         <h5 class="card-title fw-bold"><?= $lang['feat_lock_title'] ?? 'Account Lockout' ?></h5>
-                        <p class="card-text text-muted small"><?= $lang['feat_lock_desc'] ?? 'Accounts lock after 5 failed attempts for 10 minutes to block brute force.' ?></p>
+                        <p class="card-text text-muted small"><?= $lang['feat_lock_desc'] ?? 'Accounts lock after 5 failed attempts for 5 minutes to block brute force.' ?></p>
                     </div>
                 </div>
             </div>

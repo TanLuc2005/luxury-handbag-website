@@ -1,9 +1,9 @@
 {
-  "total": 5,
-  "failures": 4,
-  "locked_at": 5,
+  "total": 3,
+  "failures": 2,
+  "locked_at": 3,
   "mfa_blocked": false,
   "cracked": null,
-  "started_at": "2026-04-06T19:01:32.207691",
-  "finished_at": "2026-04-06T19:01:44.867755"
+  "started_at": "2026-04-09T20:26:11.774530",
+  "finished_at": "2026-04-09T20:26:20.009828"
 }

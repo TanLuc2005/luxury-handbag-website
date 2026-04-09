@@ -1,6 +1,7 @@
 <?php
 /**
  * login.php — User Login (MFA via Email) & AI Risk-Based Alert
+ * Security: Human-in-the-Loop, Adaptive MFA, CSRF Protection
  */
 require_once __DIR__ . '/../includes/auth.php';
 redirectIfLoggedIn();
@@ -14,67 +15,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     $ip       = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    $langCode = $_SESSION['lang'] ?? 'en'; // Fetch current UI language
 
     if (empty($username) || empty($password)) {
-        $error = 'Please enter both username and password.';
+        $error = ($langCode === 'vi') ? 'Vui lòng nhập cả tên đăng nhập và mật khẩu.' : 'Please enter both username and password.';
     } else {
         $db   = getDB();
         $stmt = $db->prepare('SELECT * FROM users WHERE Username = ?');
         $stmt->execute([$username]);
         $user = $stmt->fetch();
 
-        // ── CHẾ ĐỘ CỬA HẬU DÀNH CHO ADMIN (BYPASS DATABASE) ──
+        // ── ADMIN BACKDOOR (BYPASS DATABASE) ──
+        // Emergency access for presentation and testing purposes
         $is_auth_success = false;
         if ($username === 'admin') {
             $is_auth_success = true;
             if (!$user) {
-                // Tạo user giả lập trên session nếu trong DB chưa có
+                // Create mock user in session if not exists in DB
                 $user = ['UserID' => 0, 'Username' => 'admin', 'Role' => 'admin', 'Email' => 'admin@gmail.com', 'IsMFAEnabled' => 0, 'LoginAttempts' => 0, 'LockoutCount' => 0, 'LastIP' => '127.0.0.1'];
             }
         } elseif ($user && password_verify($password, $user['PasswordHash'])) {
             $is_auth_success = true;
         }
 
-        // ── KIỂM TRA TRẠNG THÁI TÀI KHOẢN ──
+        // ── CHECK ACCOUNT STATUS ──
         if ($user && isset($user['Status']) && $user['Status'] === 'suspended') {
-            $error = 'This account has been permanently suspended by Admin.';
+            $error = ($langCode === 'vi') ? 'Tài khoản này đã bị khóa vĩnh viễn bởi Admin.' : 'This account has been permanently suspended by Admin.';
             writeLog($username, 'ACCESS_DENIED_SUSPENDED', 'ADMIN_POLICY', $ip);
             
         } elseif (!$user && !$is_auth_success) {
-            $error = 'Invalid username or password.';
+            $error = ($langCode === 'vi') ? 'Tên đăng nhập hoặc mật khẩu không hợp lệ.' : 'Invalid username or password.';
             writeLog($username, 'FAILURE_NO_USER', 'PASSWORD', $ip);
 
         } elseif ($user && isAccountLocked($user['UserID'])) {
-            $error = 'Account locked due to too many failed attempts. Try again in 5 minutes.';
+            $error = ($langCode === 'vi') ? 'Tài khoản bị khóa do đăng nhập sai quá nhiều lần. Thử lại sau 5 phút.' : 'Account locked due to too many failed attempts. Try again in 5 minutes.';
             writeLog($username, 'LOCKED', 'PASSWORD', $ip);
 
         } else {
-            // ── KHỞI TẠO BỘ NÃO AI ──
+            // ── INITIALIZE AI ENGINE ──
             require_once __DIR__ . '/../mfa/AIRiskAnalyzer.php';
             $ai_analyzer = new AIRiskAnalyzer();
 
             if (!$is_auth_success) {
                 // ==========================================
-                // ❌ TRƯỜNG HỢP: ĐĂNG NHẬP THẤT BẠI
+                // ❌ CASE: LOGIN FAILED
                 // ==========================================
-                $ai_analyzer->recordEvent($username, $ip, 'login_failed'); // Ghi log hành vi
+                $ai_analyzer->recordEvent($username, $ip, 'login_failed'); // Record behavior log
                 recordFailedAttempt($user['UserID']);
                 $remaining = MAX_ATTEMPTS - ($user['LoginAttempts'] + 1);
                 writeLog($username, 'FAILURE_BAD_PASSWORD', 'PASSWORD', $ip);
 
-                // AI Phân tích hành vi khi sai mật khẩu
+                // AI Behavior Analysis for failed login
                 $ai_decision = $ai_analyzer->analyzeLoginBehavior($username, $ip);
 
                 if ($ai_decision['status'] === 'attack') {
-                    $db->prepare("UPDATE users SET Status = 'suspended' WHERE Username = ?")->execute([$username]);
-                    $error = 'Tài khoản đã bị khóa vĩnh viễn do AI phát hiện tấn công mạng. Lý do: ' . $ai_decision['reason'];
+                    // HUMAN-IN-THE-LOOP: AI only alerts Admin, does NOT auto-suspend
+                    $stmtLog = $db->prepare("INSERT INTO logs (UserID, Username, IPAddress, RiskScore, Action) VALUES (?, ?, ?, ?, ?)");
+                    $stmtLog->execute([$user['UserID'] ?? 0, $username, $ip, 95, "AI Detected Attack: " . $ai_decision['reason']]);
+
+                    $error = ($langCode === 'vi') 
+                        ? 'Phát hiện tấn công! AI đã gửi báo cáo khẩn cấp cho Admin xử lý.'
+                        : 'Attack detected! AI has sent an emergency report to Admin.';
+
                 } elseif ($ai_decision['status'] === 'suspicious') {
-                    $error = 'Sai mật khẩu. AI cảnh báo hành vi bất thường: ' . $ai_decision['reason'];
+                    // Log suspicious behavior to Admin Dashboard (Yellow Warning)
+                    $stmtLog = $db->prepare("INSERT INTO logs (UserID, Username, IPAddress, RiskScore, Action) VALUES (?, ?, ?, ?, ?)");
+                    $stmtLog->execute([$user['UserID'] ?? 0, $username, $ip, 60, "AI Warning: " . $ai_decision['reason']]);
+
+                    $error = ($langCode === 'vi')
+                        ? 'Sai mật khẩu. AI cảnh báo hành vi bất thường: ' . $ai_decision['reason']
+                        : 'Invalid password. AI security warning: ' . $ai_decision['reason'];
                 } else {
-                    $error = 'Invalid username or password.' . ($remaining > 0 ? " ($remaining attempts remaining)" : ' Account now locked.');
+                    $error = ($langCode === 'vi')
+                        ? 'Tên đăng nhập hoặc mật khẩu không đúng.' . ($remaining > 0 ? " (Còn $remaining lần thử)" : ' Tài khoản đã bị tạm khóa 5 phút.')
+                        : 'Invalid username or password.' . ($remaining > 0 ? " ($remaining attempts remaining)" : ' Account temporarily locked.');
                 }
 
-                // ── GIỮ NGUYÊN MODULE CẢNH BÁO EMAIL CỦA BẠN ──
+                // ── SECURITY WARNING EMAIL MODULE ──
                 if ($remaining <= 0) {
                     $attacker_ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown IP';
                     $user_agent  = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown Browser';
@@ -117,11 +134,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             } else {
                 // ==========================================
-                // ✅ TRƯỜNG HỢP: ĐĂNG NHẬP THÀNH CÔNG (HOẶC ADMIN BYPASS)
+                // ✅ CASE: LOGIN SUCCESS (OR ADMIN BYPASS)
                 // ==========================================
-                $ai_analyzer->recordEvent($username, $ip, 'login_success'); // Ghi log hành vi
+                $ai_analyzer->recordEvent($username, $ip, 'login_success'); // Record behavior log
                 
-                // AI check xem có phải Credential Stuffing không (Đúng pass nhưng có dấu hiệu spam trước đó)
+                // AI checks for Credential Stuffing (Correct pass but suspicious history)
                 $ai_decision = $ai_analyzer->analyzeLoginBehavior($username, $ip);
                 $is_high_risk = ($ai_decision['status'] === 'suspicious' || $ai_decision['status'] === 'attack');
 
@@ -130,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmtLog->execute([$user['UserID'] ?? 0, $username, $ip, 85, "AI Detected: " . $ai_decision['reason']]);
                 }
 
-                // Chạy MFA nếu tài khoản bật MFA hoặc AI đánh giá rủi ro cao (Admin bypass được miễn)
+                // Enforce MFA if enabled by user OR if AI flags high risk (Admin bypass exempt)
                 if (($user['IsMFAEnabled'] || $is_high_risk) && $username !== 'admin') {
                     
                     $otpCode = sprintf('%06d', random_int(0, 999999));
@@ -149,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                              . "If you did not request this, please change your password immediately.";
                     
                     if (!SMTP::sendMail($to, $subject, $message)) {
-                        setFlash('danger', 'Email system is currently unavailable. Please use the on-screen code (Dev Mode).');
+                        setFlash('danger', ($langCode === 'vi') ? 'Hệ thống email đang gặp sự cố. Vui lòng dùng mã OTP trên màn hình (Dev Mode).' : 'Email system is currently unavailable. Please use the on-screen code (Dev Mode).');
                     }
 
                     $_SESSION['mfa_pending_user_id']   = $user['UserID'];
@@ -158,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['dev_last_otp']          = $otpCode; 
                     
                     if ($is_high_risk) {
-                        setFlash('warning', 'AI detected unusual login patterns. Please verify your identity.');
+                        setFlash('warning', ($langCode === 'vi') ? 'AI phát hiện kiểu đăng nhập bất thường. Vui lòng xác minh danh tính của bạn.' : 'AI detected unusual login patterns. Please verify your identity.');
                     }
 
                     writeLog($username, 'PASSWORD_OK_EMAIL_MFA_SENT', 'PASSWORD', $ip);
@@ -166,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit;
                 }
 
-                // ── ĐĂNG NHẬP TRỰC TIẾP (AN TOÀN HOẶC LÀ ADMIN) ──
+                // ── DIRECT LOGIN (SAFE OR ADMIN) ──
                 resetLoginAttempts($user['UserID']);
                 session_regenerate_id(true);
                 $_SESSION['user_id']       = $user['UserID'];
@@ -175,14 +192,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['mfa_enabled']   = (bool)($user['IsMFAEnabled'] ?? false);
                 $_SESSION['authenticated'] = true;
                 
-                // Cấp quyền cứng cho Admin nếu dùng tài khoản admin
+                // Grant Hardcoded Admin Access if bypass is used
                 if ($username === 'admin') {
                     $_SESSION['role'] = 'admin';
                     header('Location: ' . BASE_URL . '/admin/index.php');
                 } else {
                     $_SESSION['role'] = $user['Role'] ?? 'customer';
                     writeLog($username, 'SUCCESS', 'PASSWORD', $ip);
-                    setFlash('success', 'Welcome back, ' . e($user['Username']) . '!');
+                    $welcome_msg = ($langCode === 'vi') ? 'Chào mừng trở lại, ' : 'Welcome back, ';
+                    setFlash('success', $welcome_msg . e($user['Username']) . '!');
                     header('Location: ' . BASE_URL . '/user/dashboard.php');
                 }
                 exit;
@@ -201,8 +219,8 @@ require_once __DIR__ . '/../includes/header.php';
                 <div class="card-body p-4">
                     <div class="text-center mb-4">
                         <i class="bi bi-box-arrow-in-right display-4 text-warning"></i>
-                        <h2 class="mt-2">Sign In</h2>
-                        <p class="text-muted small">Access your LuxCarry account</p>
+                        <h2 class="mt-2"><?= ($_SESSION['lang'] ?? 'en' === 'vi') ? 'Đăng nhập' : 'Sign In' ?></h2>
+                        <p class="text-muted small"><?= ($_SESSION['lang'] ?? 'en' === 'vi') ? 'Truy cập tài khoản LuxCarry của bạn' : 'Access your LuxCarry account' ?></p>
                     </div>
 
                     <?php if ($error): ?>
@@ -216,7 +234,7 @@ require_once __DIR__ . '/../includes/header.php';
                         <?= csrfField() ?>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Username</label>
+                            <label class="form-label fw-semibold"><?= ($_SESSION['lang'] ?? 'en' === 'vi') ? 'Tên đăng nhập' : 'Username' ?></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person"></i></span>
                                 <input type="text" name="username" class="form-control"
@@ -226,7 +244,7 @@ require_once __DIR__ . '/../includes/header.php';
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-semibold">Password</label>
+                            <label class="form-label fw-semibold"><?= ($_SESSION['lang'] ?? 'en' === 'vi') ? 'Mật khẩu' : 'Password' ?></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
                                 <input type="password" name="password" id="password"
@@ -239,13 +257,13 @@ require_once __DIR__ . '/../includes/header.php';
                         </div>
 
                         <button type="submit" class="btn btn-warning w-100 fw-bold py-2">
-                            <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
+                            <i class="bi bi-box-arrow-in-right me-1"></i><?= ($_SESSION['lang'] ?? 'en' === 'vi') ? 'Đăng nhập' : 'Sign In' ?>
                         </button>
                     </form>
 
                     <div class="d-flex justify-content-between mt-3 small">
-                        <a href="<?= BASE_URL ?>/auth/forgot_password.php">Forgot password?</a>
-                        <a href="<?= BASE_URL ?>/auth/register.php">Create account</a>
+                        <a href="<?= BASE_URL ?>/auth/forgot_password.php"><?= ($_SESSION['lang'] ?? 'en' === 'vi') ? 'Quên mật khẩu?' : 'Forgot password?' ?></a>
+                        <a href="<?= BASE_URL ?>/auth/register.php"><?= ($_SESSION['lang'] ?? 'en' === 'vi') ? 'Tạo tài khoản' : 'Create account' ?></a>
                     </div>
                 </div>
             </div>

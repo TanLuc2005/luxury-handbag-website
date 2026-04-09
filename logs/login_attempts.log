@@ -66,3 +66,7 @@
 [2026-04-06 14:01:38] | USERNAME: lucnguyen            | IP: ::1             | STAGE: PASSWORD   | RESULT: FAILURE_BAD_PASSWORD
 [2026-04-06 14:01:39] | USERNAME: lucnguyen            | IP: ::1             | STAGE: PASSWORD   | RESULT: FAILURE_BAD_PASSWORD
 [2026-04-06 14:01:40] | USERNAME: lucnguyen            | IP: ::1             | STAGE: PASSWORD   | RESULT: FAILURE_BAD_PASSWORD
+[2026-04-09 14:40:37] | USERNAME: LUCNGUYEN            | IP: ::1             | STAGE: PASSWORD   | RESULT: SUCCESS
+[2026-04-09 14:50:10] | USERNAME: LUCNGUYEN            | IP: ::1             | STAGE: PASSWORD   | RESULT: SUCCESS
+[2026-04-09 14:50:43] | USERNAME: LUCNGUYEN            | IP: ::1             | STAGE: PASSWORD   | RESULT: PASSWORD_OK_EMAIL_MFA_SENT
+[2026-04-09 14:52:49] | USERNAME: admin                | IP: ::1             | STAGE: PASSWORD   | RESULT: FAILURE_BAD_PASSWORD

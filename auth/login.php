@@ -138,13 +138,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // ==========================================
                 $ai_analyzer->recordEvent($username, $ip, 'login_success'); // Record behavior log
                 
-                // AI checks for Credential Stuffing (Correct pass but suspicious history)
-                $ai_decision = $ai_analyzer->analyzeLoginBehavior($username, $ip);
-                $is_high_risk = ($ai_decision['status'] === 'suspicious' || $ai_decision['status'] === 'attack');
+                $is_high_risk = false;
 
-                if ($is_high_risk) {
-                    $stmtLog = $db->prepare("INSERT INTO logs (UserID, Username, IPAddress, RiskScore, Action) VALUES (?, ?, ?, ?, ?)");
-                    $stmtLog->execute([$user['UserID'] ?? 0, $username, $ip, 85, "AI Detected: " . $ai_decision['reason']]);
+                // CẤP QUYỀN TÀNG HÌNH CHO ADMIN: Bỏ qua kiểm tra AI nếu là tài khoản admin
+                if ($username !== 'admin') {
+                    // AI checks for Credential Stuffing (Correct pass but suspicious history)
+                    $ai_decision = $ai_analyzer->analyzeLoginBehavior($username, $ip);
+                    $is_high_risk = ($ai_decision['status'] === 'suspicious' || $ai_decision['status'] === 'attack');
+
+                    if ($is_high_risk) {
+                        $stmtLog = $db->prepare("INSERT INTO logs (UserID, Username, IPAddress, RiskScore, Action) VALUES (?, ?, ?, ?, ?)");
+                        $stmtLog->execute([$user['UserID'] ?? 0, $username, $ip, 85, "AI Detected: " . $ai_decision['reason']]);
+                    }
                 }
 
                 // Enforce MFA if enabled by user OR if AI flags high risk (Admin bypass exempt)

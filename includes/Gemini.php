@@ -7,7 +7,7 @@
 class Gemini {
     // ⚠️ BẢO MẬT: Hãy vào Google AI Studio tạo một API Key MỚI nhé!
     // Key cũ của bạn đã bị lộ khi gửi mã nguồn lên đây.
-    private static $apiKey = 'AIzaSyDSdq1tC3ca2d2-kweBIuE0uDEgMvSWB-A'; 
+    private static $apiKey = 'AIzaSyBdateOXlwaCERjym5nOirAYzJKr_cO650'; 
     
     // Cập nhật model mới nhất và ổn định nhất của Google: Gemini 2.5 Flash
     private static $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
